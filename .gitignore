@@ -1,0 +1,24 @@
+# Project #
+############
+bin
+
+# Composer #
+############
+composer.phar
+vendor
+auth.json
+
+# PHPStorm #
+############
+.idea
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
