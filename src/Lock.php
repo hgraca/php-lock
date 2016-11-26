@@ -1,12 +1,16 @@
 <?php
 namespace Hgraca\Lock;
 
+use Exception;
+use Hgraca\Lock\Adapter\FileSystem\FileSystemAdapter;
 use Hgraca\Lock\Exception\CouldNotCreateLockException;
 use Hgraca\Lock\Exception\CouldNotReleaseLockException;
 use Hgraca\Lock\Exception\LockNotFoundException;
-use SplFileObject;
+use Hgraca\Lock\Port\FileSystem\Exception\InvalidPathException;
+use Hgraca\Lock\Port\FileSystem\Exception\PathAlreadyExistsException;
+use Hgraca\Lock\Port\FileSystem\FileSystemInterface;
 
-class Lock
+final class Lock
 {
     /** @var string */
     private $lockPath;
@@ -17,11 +21,19 @@ class Lock
     /** @var string */
     private $lockExt;
 
-    public function __construct(string $lockName = 'default', string $lockPath = null, string $lockExt = 'lock')
-    {
-        $this->lockName = $lockName;
-        $this->lockPath = $lockPath ?? sys_get_temp_dir();
-        $this->lockExt  = $lockExt;
+    /** @var FileSystemInterface */
+    private $fileSystem;
+
+    public function __construct(
+        string $lockName = 'default',
+        string $lockPath = null,
+        string $lockExt = 'lock',
+        FileSystemInterface $fileSystem = null
+    ) {
+        $this->lockName   = $lockName;
+        $this->lockPath   = $lockPath ?? sys_get_temp_dir();
+        $this->lockExt    = $lockExt;
+        $this->fileSystem = $fileSystem ?? new FileSystemAdapter();
     }
 
     public function acquire(): bool
@@ -33,52 +45,33 @@ class Lock
         return $this->createLock();
     }
 
+    /**
+     * @throws CouldNotReleaseLockException
+     * @throws InvalidPathException
+     */
     public function release(): bool
     {
-        $lockFilePath = $this->getLockFilePath();
-        if (file_exists($lockFilePath)) {
-            @unlink($lockFilePath);
+        if ($this->lockExists()) {
+            $this->fileSystem->deleteFile($this->getLockFilePath());
         }
 
-        if (file_exists($lockFilePath)) {
+        if ($this->lockExists()) {
             throw new CouldNotReleaseLockException();
         }
 
         return true;
     }
 
-    private function lockExists(): bool
-    {
-        return file_exists($this->getLockFilePath());
-    }
-
-    private function isMine(): bool
-    {
-        return getmypid() === $this->getLockPid();
-    }
-
-    private function getLockPid(): int
-    {
-        if (! $this->lockExists()) {
-            throw new LockNotFoundException();
-        }
-
-        $fileObj   = new SplFileObject($this->getLockFilePath());
-        $firstLine = $fileObj->fgets();
-
-        return (int) $firstLine;
-    }
-
     /**
-     * @throws \Exception
+     * @throws CouldNotCreateLockException
+     * @throws InvalidPathException
+     * @throws PathAlreadyExistsException
      */
     private function createLock(string $myPid = null): bool
     {
-        $oldUmask = umask(0);
-        mkdir($this->lockPath, 0777, true);
-        umask($oldUmask);
+        $this->fileSystem->createDir($this->lockPath);
 
-        @file_put_contents($this->getLockFilePath(), $myPid ?? getmypid(), FILE_APPEND);
+        $this->fileSystem->writeFile($this->getLockFilePath(), $myPid ?? getmypid());
 
         if (! $this->lockExists()) {
             throw new CouldNotCreateLockException();
@@ -99,5 +92,27 @@ class Lock
             . rtrim(ltrim($this->lockName, '/'), '.')
             . '.'
             . ltrim($this->lockExt, '.');
+    }
+
+    private function lockExists(): bool
+    {
+        return $this->fileSystem->fileExists($this->getLockFilePath());
+    }
+
+    private function isMine(): bool
+    {
+        return getmypid() === $this->getLockPid();
+    }
+
+    /**
+     * @throws LockNotFoundException
+     */
+    private function getLockPid(): int
+    {
+        try {
+            return $this->fileSystem->readFile($this->getLockFilePath());
+        } catch (Exception $e) {
+            throw new LockNotFoundException('', 0, $e);
+        }
     }
 }
