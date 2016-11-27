@@ -13,6 +13,3 @@ composer require hgraca/lock
 ```
 
 ## Todo
-
- - remove unecessary catches in the adapter
- - reach 100% coverage in the Lock class
