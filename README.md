@@ -14,8 +14,5 @@ composer require hgraca/lock
 
 ## Todo
 
- - Use FileSystem lib:
-    - Create our file system interface
-    - Create an adapter for the FileSystem lib, implementing our interface
-    - Use our interface in the Lock, with an optional dependency being the FileSystemAdapter
- - Create tests
+ - remove unecessary catches in the adapter
+ - reach 100% coverage in the Lock class

@@ -6,3 +6,4 @@
 /.gitlab-ci.yml     export-ignore
 /.travis.yml        export-ignore
 /phpunit.xml        export-ignore
+/clover.xml         export-ignore
