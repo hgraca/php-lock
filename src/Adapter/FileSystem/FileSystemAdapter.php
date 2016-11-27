@@ -91,7 +91,7 @@ final class FileSystemAdapter implements LockFileSystemInterface
     public function writeFile(string $path, string $content)
     {
         try {
-            return $this->fileSystem->writeFile($path, $content);
+            $this->fileSystem->writeFile($path, $content);
         }
         catch (InvalidPathException $e) {
             throw new LockInvalidPathException('', 0, $e);

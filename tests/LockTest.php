@@ -4,6 +4,7 @@ namespace Hgraca\Lock\Test;
 use Hgraca\FileSystem\InMemoryFileSystem;
 use Hgraca\Lock\Adapter\FileSystem\FileSystemAdapter;
 use Hgraca\Lock\Lock;
+use Hgraca\Lock\Port\FileSystem\Exception\FileNotFoundException;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 
@@ -11,10 +12,6 @@ final class LockTest extends PHPUnit_Framework_TestCase
 {
     /** @var string */
     private $defaultLockPath = __DIR__ . '/default.lock';
-
-    public function setUp()
-    {
-    }
 
     public function testAcquire_existsAndIsMine()
     {
@@ -68,9 +65,26 @@ final class LockTest extends PHPUnit_Framework_TestCase
 
         $fileSystem->shouldReceive('createDir');
         $fileSystem->shouldReceive('writeFile');
-        $fileSystem->shouldReceive('fileExists')->andReturn(false);
-        $fileSystem->shouldReceive('fileExists')->andReturn(true);
+        $fileSystem->shouldReceive('fileExists')->once()->andReturn(false);
+        $fileSystem->shouldReceive('fileExists')->once()->andReturn(true);
         $fileSystem->shouldReceive('readFile')->andReturn('123098');
+
+        $lock->acquire();
+    }
+
+    /**
+     * @expectedException \Hgraca\Lock\Exception\LockNotFoundException
+     */
+    public function testAcquire_CreateLock_LockIsNotFoundWhenReadingPid()
+    {
+        $fileSystem = Mockery::mock(InMemoryFileSystem::class, [InMemoryFileSystem::IDEMPOTENT]);
+        $lock       = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
+
+        $fileSystem->shouldReceive('createDir');
+        $fileSystem->shouldReceive('writeFile');
+        $fileSystem->shouldReceive('fileExists')->once()->andReturn(false);
+        $fileSystem->shouldReceive('fileExists')->once()->andReturn(true);
+        $fileSystem->shouldReceive('readFile')->andThrow(FileNotFoundException::class);
 
         $lock->acquire();
     }
