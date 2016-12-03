@@ -1,4 +1,4 @@
-# Lock library
+# Hgraca\Lock
 [![Build Status](https://travis-ci.org/hgraca/php-lock.svg?branch=master)](https://travis-ci.org/hgraca/php-lock)
 [![codecov](https://codecov.io/gh/hgraca/php-lock/branch/master/graph/badge.svg)](https://codecov.io/gh/hgraca/php-lock)
 
@@ -13,3 +13,5 @@ composer require hgraca/lock
 ```
 
 ## Todo
+
+- Add `shields.io` badges
