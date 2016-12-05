@@ -15,3 +15,4 @@ composer require hgraca/lock
 ## Todo
 
 - Add `shields.io` badges
+- Add a CS fixer
