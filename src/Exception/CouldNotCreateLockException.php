@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock\Exception;
 
 use Exception;

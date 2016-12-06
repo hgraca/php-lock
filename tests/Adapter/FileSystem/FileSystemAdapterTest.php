@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock\Test\Adapter\FileSystem;
 
 use Hgraca\FileSystem\Exception\FileNotFoundException;
@@ -22,12 +23,12 @@ final class FileSystemAdapterTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->fileSystem = Mockery::mock(InMemoryFileSystem::class, [InMemoryFileSystem::IDEMPOTENT]);
-        $this->adapter       = new FileSystemAdapter($this->fileSystem);
+        $this->adapter = new FileSystemAdapter($this->fileSystem);
     }
 
     public function testFileExists()
     {
-        $pathExists       = __DIR__ . '/file.txt';
+        $pathExists = __DIR__ . '/file.txt';
         $pathDoesNotExist = __DIR__ . '/AAAA.txt';
         $this->fileSystem->shouldReceive('fileExists')->with($pathExists)->andReturn(true);
         $this->fileSystem->shouldReceive('fileExists')->with($pathDoesNotExist)->andReturn(false);
@@ -129,7 +130,7 @@ final class FileSystemAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testWriteFile()
     {
-        $path     = 'some/path';
+        $path = 'some/path';
         $contents = '123';
         $this->fileSystem->shouldReceive('writeFile')->once()->with($path, $contents);
 

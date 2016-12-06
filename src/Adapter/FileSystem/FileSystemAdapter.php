@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock\Adapter\FileSystem;
 
 use Hgraca\FileSystem\Exception\FileNotFoundException;
@@ -42,8 +43,7 @@ final class FileSystemAdapter implements LockFileSystemInterface
     {
         try {
             return $this->fileSystem->deleteFile($path);
-        }
-        catch (InvalidPathException $e) {
+        } catch (InvalidPathException $e) {
             throw new LockInvalidPathException('', 0, $e);
         }
     }
@@ -58,11 +58,9 @@ final class FileSystemAdapter implements LockFileSystemInterface
     {
         try {
             return $this->fileSystem->createDir($path);
-        }
-        catch (InvalidPathException $e) {
+        } catch (InvalidPathException $e) {
             throw new LockInvalidPathException('', 0, $e);
-        }
-        catch (PathAlreadyExistsException $e) {
+        } catch (PathAlreadyExistsException $e) {
             throw new LockPathAlreadyExistsException('', 0, $e);
         }
     }
@@ -75,11 +73,9 @@ final class FileSystemAdapter implements LockFileSystemInterface
     {
         try {
             return $this->fileSystem->readFile($path);
-        }
-        catch (InvalidPathException $e) {
+        } catch (InvalidPathException $e) {
             throw new LockInvalidPathException('', 0, $e);
-        }
-        catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             throw new LockFileNotFoundException('', 0, $e);
         }
     }
@@ -92,11 +88,9 @@ final class FileSystemAdapter implements LockFileSystemInterface
     {
         try {
             $this->fileSystem->writeFile($path, $content);
-        }
-        catch (InvalidPathException $e) {
+        } catch (InvalidPathException $e) {
             throw new LockInvalidPathException('', 0, $e);
-        }
-        catch (PathAlreadyExistsException $e) {
+        } catch (PathAlreadyExistsException $e) {
             throw new LockPathAlreadyExistsException('', 0, $e);
         }
     }

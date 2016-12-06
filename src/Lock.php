@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock;
 
 use Exception;
@@ -30,9 +31,9 @@ final class Lock
         string $lockExt = 'lock',
         FileSystemInterface $fileSystem = null
     ) {
-        $this->lockName   = $lockName;
-        $this->lockPath   = $lockPath ?? sys_get_temp_dir();
-        $this->lockExt    = $lockExt;
+        $this->lockName = $lockName;
+        $this->lockPath = $lockPath ?? sys_get_temp_dir();
+        $this->lockExt = $lockExt;
         $this->fileSystem = $fileSystem ?? new FileSystemAdapter();
     }
 
@@ -73,11 +74,11 @@ final class Lock
 
         $this->fileSystem->writeFile($this->getLockFilePath(), $myPid ?? getmypid());
 
-        if (! $this->lockExists()) {
+        if (!$this->lockExists()) {
             throw new CouldNotCreateLockException();
         }
 
-        if (! $this->isMine()) {
+        if (!$this->isMine()) {
             throw new CouldNotCreateLockException('Another process somehow locked before us!');
         }
 

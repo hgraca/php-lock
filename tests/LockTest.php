@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock\Test;
 
 use Hgraca\FileSystem\InMemoryFileSystem;
@@ -61,7 +62,7 @@ final class LockTest extends PHPUnit_Framework_TestCase
     public function testAcquire_CreateLock_LockIsNotMine()
     {
         $fileSystem = Mockery::mock(InMemoryFileSystem::class, [InMemoryFileSystem::IDEMPOTENT]);
-        $lock       = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
+        $lock = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
 
         $fileSystem->shouldReceive('createDir');
         $fileSystem->shouldReceive('writeFile');
@@ -78,7 +79,7 @@ final class LockTest extends PHPUnit_Framework_TestCase
     public function testAcquire_CreateLock_LockIsNotFoundWhenReadingPid()
     {
         $fileSystem = Mockery::mock(InMemoryFileSystem::class, [InMemoryFileSystem::IDEMPOTENT]);
-        $lock       = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
+        $lock = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
 
         $fileSystem->shouldReceive('createDir');
         $fileSystem->shouldReceive('writeFile');
@@ -113,7 +114,7 @@ final class LockTest extends PHPUnit_Framework_TestCase
     public function testRelease_CouldNotReleaseLock()
     {
         $fileSystem = Mockery::mock(InMemoryFileSystem::class, [InMemoryFileSystem::IDEMPOTENT]);
-        $lock       = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
+        $lock = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
 
         $fileSystem->shouldReceive('fileExists')->andReturn(true);
         $fileSystem->shouldReceive('deleteFile')->andReturn(true);
@@ -124,7 +125,7 @@ final class LockTest extends PHPUnit_Framework_TestCase
     private function createRealFileSystemAndLock(): array
     {
         $fileSystem = new InMemoryFileSystem(InMemoryFileSystem::IDEMPOTENT);
-        $lock       = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
+        $lock = new Lock('default', __DIR__, 'lock', new FileSystemAdapter($fileSystem));
 
         return [$lock, $fileSystem];
     }

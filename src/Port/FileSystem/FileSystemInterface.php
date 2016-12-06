@@ -1,4 +1,5 @@
 <?php
+
 namespace Hgraca\Lock\Port\FileSystem;
 
 use Hgraca\Lock\Port\FileSystem\Exception\FileNotFoundException;
